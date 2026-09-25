@@ -135,3 +135,15 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
     .modal-overlay { align-items: center; }
     .modal-content { border-radius: 24px; border: 1px solid var(--border); }
 }
+/* Esconde o texto da navbar no celular para caber o botão de Admin */
+@media (max-width: 600px) {
+    .nav-btn span {
+        display: none; /* Esconde a palavra */
+    }
+    .nav-btn i {
+        font-size: 20px; /* Aumenta um pouco o ícone para ficar visível */
+    }
+    .nav-btn {
+        padding: 12px; /* Aumenta a área de toque */
+    }
+}
