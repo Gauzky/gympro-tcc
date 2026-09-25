@@ -31,11 +31,39 @@ let currentViewingClientEmail = null;
 let targetUserEmailForWorkout = null;
 
 const exerciseLibrary = [
+    // PEITO
     { name: "Supino Reto", muscle: "Peito", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=80&q=80", video: "rT7DgCr-3pg" },
     { name: "Supino Inclinado", muscle: "Peito", img: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=80&q=80", video: "8iPEnn-ltC8" },
+    { name: "Crucifixo", muscle: "Peito", img: "https://images.unsplash.com/photo-1652364731275-3c8b6d4b1f53?auto=format&fit=crop&w=80&q=80", video: "e7XVB3pXyIQ" },
+    { name: "Crossover", muscle: "Peito", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=80&q=80", video: "I5i1b5J4fPw" },
+    { name: "Flexão de Braço", muscle: "Peito", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2dcb?auto=format&fit=crop&w=80&q=80", video: "IODKqqHjHnI" },
+    // COSTAS
     { name: "Puxada Frontal", muscle: "Costas", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=80&q=80", video: "CAo7hKvxeXQ" },
+    { name: "Remada Curvada", muscle: "Costas", img: "https://images.unsplash.com/photo-1583500178690-f7f4aca4d0b1?auto=format&fit=crop&w=80&q=80", video: "kBji6j5XNQ4" },
+    { name: "Remada Baixa", muscle: "Costas", img: "https://images.unsplash.com/photo-1597347306199-68b3a8d1c9e1?auto=format&fit=crop&w=80&q=80", video: "pApl4TKy1UM" },
+    { name: "Levantamento Terra", muscle: "Costas", img: "https://images.unsplash.com/photo-1517960451124-7d9b3f0a8f0b?auto=format&fit=crop&w=80&q=80", video: "Nyju6b1Z3UE" },
+    { name: "Pulldown", muscle: "Costas", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=80&q=80", video: "w5L3qJ4N8wQ" },
+    // PERNAS
     { name: "Agachamento", muscle: "Pernas", img: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=80&q=80", video: "ultWZbUMPL8" },
-    { name: "Rosca Direta", muscle: "Bíceps", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=80&q=80", video: "kwG2ipFRgfo" }
+    { name: "Leg Press", muscle: "Pernas", img: "https://images.unsplash.com/photo-1584466977773-e625c64c8d3b?auto=format&fit=crop&w=80&q=80", video: "IZQ0Q1N_NtU" },
+    { name: "Cadeira Extensora", muscle: "Pernas", img: "https://images.unsplash.com/photo-1583500178690-f7f4aca4d0b1?auto=format&fit=crop&w=80&q=80", video: "t3D1F4q6p9w" },
+    { name: "Mesa Flexora", muscle: "Pernas", img: "https://images.unsplash.com/photo-1597347306199-68b3a8d1c9e1?auto=format&fit=crop&w=80&q=80", video: "pApl4TKy1UM" },
+    { name: "Panturrilha", muscle: "Pernas", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=80&q=80", video: "3b5d1w5p2Q8" },
+    // BÍCEPS
+    { name: "Rosca Direta", muscle: "Bíceps", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=80&q=80", video: "kwG2ipFRgfo" },
+    { name: "Rosca Martelo", muscle: "Bíceps", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=80&q=80", video: "z4eR3Nk5L6o" },
+    { name: "Rosca Concentrada", muscle: "Bíceps", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=80&q=80", video: "y5L3qJ4N8wQ" },
+    // TRÍCEPS
+    { name: "Tríceps Pulley", muscle: "Tríceps", img: "https://images.unsplash.com/photo-1583500178690-f7f4aca4d0b1?auto=format&fit=crop&w=80&q=80", video: "2j5j3w4Q5e" },
+    { name: "Tríceps Francês", muscle: "Tríceps", img: "https://images.unsplash.com/photo-1583500178690-f7f4aca4d0b1?auto=format&fit=crop&w=80&q=80", video: "3d1w5p2Q8c" },
+    { name: "Tríceps Testa", muscle: "Tríceps", img: "https://images.unsplash.com/photo-1583500178690-f7f4aca4d0b1?auto=format&fit=crop&w=80&q=80", video: "5l3qJ4N8wQ" },
+    // OMBRO
+    { name: "Desenvolvimento", muscle: "Ombro", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=80&q=80", video: "q4eR3Nk5L6" },
+    { name: "Elevação Lateral", muscle: "Ombro", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=80&q=80", video: "3d1w5p2Q8c" },
+    { name: "Crucifixo Inverso", muscle: "Ombro", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=80&q=80", video: "5l3qJ4N8wQ" },
+    // ABDÔMEN
+    { name: "Abdominal Supra", muscle: "Abdômen", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2dcb?auto=format&fit=crop&w=80&q=80", video: "IODKqqHjHnI" },
+    { name: "Prancha", muscle: "Abdômen", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2dcb?auto=format&fit=crop&w=80&q=80", video: "ASdvN98wQ" }
 ];
 
 function navigateTo(viewName) {
@@ -137,10 +165,24 @@ async function deleteWorkout(id) {
     }
 }
 
+let currentMuscleTab = "Peito"; // Aba padrão
+
 function renderLibrary() {
+    // Renderiza as abas de músculos
+    const tabsDiv = document.getElementById('exercises-tabs');
+    const muscles = [...new Set(exerciseLibrary.map(ex => ex.muscle))];
+    tabsDiv.innerHTML = "";
+    muscles.forEach(m => {
+        tabsDiv.innerHTML += `<button class="tab-btn ${m === currentMuscleTab ? 'active-tab' : ''}" onclick="changeMuscleTab('${m}')">${m}</button>`;
+    });
+
+    // Renderiza os exercícios da aba atual
     const libDiv = document.getElementById('exercises-library');
     libDiv.innerHTML = "";
-    exerciseLibrary.forEach((ex, index) => {
+    const filteredExercises = exerciseLibrary.filter(ex => ex.muscle === currentMuscleTab);
+    
+    filteredExercises.forEach((ex) => {
+        const globalIndex = exerciseLibrary.indexOf(ex); // Pega o índice real no array original
         libDiv.innerHTML += `
             <div class="exercise-lib-item">
                 <img src="${ex.img}" alt="${ex.name}" class="ex-thumb">
@@ -148,10 +190,15 @@ function renderLibrary() {
                     <span>${ex.name}</span>
                     <button class="btn-video" onclick="openVideo('${ex.video}', '${ex.name}')"><i class="fa-solid fa-circle-play"></i> Ver Vídeo</button>
                 </div>
-                <button class="btn-add-lib" onclick="openExerciseConfig(${index})"><i class="fa-solid fa-plus"></i> Add</button>
+                <button class="btn-add-lib" onclick="openExerciseConfig(${globalIndex})"><i class="fa-solid fa-plus"></i> Add</button>
             </div>
         `;
     });
+}
+
+function changeMuscleTab(muscle) {
+    currentMuscleTab = muscle;
+    renderLibrary();
 }
 
 function renderAddedExercises() {

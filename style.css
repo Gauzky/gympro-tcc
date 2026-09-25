@@ -287,4 +287,37 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
     .nav-btn {
         padding: 12px; /* Aumenta a área de toque */
     }
+
+    /* =========================================================
+   ABAS DE GRUPO MUSCULAR (TABS)
+   ========================================================= */
+.exercises-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+.exercises-tabs::-webkit-scrollbar { height: 4px; }
+.exercises-tabs::-webkit-scrollbar-thumb { background: var(--bg-input); border-radius: 4px; }
+
+.tab-btn {
+    white-space: nowrap;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.tab-btn:hover { border-color: var(--primary); color: var(--text-main); }
+.tab-btn.active-tab {
+    background: var(--primary);
+    color: #0b0c0e;
+    border-color: var(--primary);
+}
+
 }
