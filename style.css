@@ -123,6 +123,52 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
 .timer-display { font-size: 96px; font-weight: 800; color: var(--primary); margin: 20px 0 30px; }
 
 /* =========================================================
+   CRONÔMETRO DE DESCANSO (VISUAL PREMIUM)
+   ========================================================= */
+.timer-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.timer-controls button {
+    width: auto;
+    flex: 1;
+    padding: 14px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-main);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.timer-controls button:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(181, 199, 235, 0.1);
+}
+
+/* Botão Pular (Vermelho) */
+.timer-controls .btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--danger);
+}
+.timer-controls .btn-danger:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+/* =========================================================
    ABAS DE EXERCÍCIOS (TABS PREMIUM)
    ========================================================= */
 .exercises-tabs {
