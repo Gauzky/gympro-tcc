@@ -146,9 +146,12 @@
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-        const API = 'http://localhost:3000/api';
-
+        // ⚠️ TROQUE PELO SEU LINK DO RENDER!
+        const API = 'https://academax-backend.onrender.com/api';
+        console.log("Script carregado. API configurada para:", API);
+    
         function toggleAuthView(view) {
+            console.log("Trocando para a view:", view);
             if (view === 'register') {
                 document.getElementById('login-view').style.display = 'none';
                 document.getElementById('register-view').style.display = 'block';
@@ -157,64 +160,104 @@
                 document.getElementById('register-view').style.display = 'none';
             }
         }
-
+    
+        // GOOGLE
         function handleCredentialResponse(response) {
-            const data = JSON.parse(atob(response.credential.split('.')[1]));
-            fetch(`${API}/google-login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: data.name, email: data.email, picture: data.picture })
-            })
-            .then(res => res.json())
-            .then(user => {
-                if(user.error) { alert(user.error); return; }
-                localStorage.setItem('gympro_user', JSON.stringify(user));
-                window.location.href = 'index.html';
-            });
+            console.log("✅ Google respondeu! Token recebido.");
+            try {
+                const data = JSON.parse(atob(response.credential.split('.')[1]));
+                console.log("Dados do Google:", data);
+                
+                fetch(`${API}/google-login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: data.name, email: data.email, picture: data.picture })
+                })
+                .then(res => {
+                    console.log("Resposta do servidor (Google):", res.status);
+                    return res.json();
+                })
+                .then(user => {
+                    console.log("Usuário salvo:", user);
+                    if(user.error) { alert(user.error); return; }
+                    localStorage.setItem('gympro_user', JSON.stringify(user));
+                    window.location.href = 'index.html';
+                })
+                .catch(err => {
+                    console.error("Erro no fetch do Google:", err);
+                    alert("Erro ao conectar no banco de dados (Google).");
+                });
+            } catch (error) {
+                console.error("Erro ao processar Google:", error);
+            }
         }
-
+    
+        // LOGIN NORMAL
         function fazerLogin(event) {
             event.preventDefault();
+            console.log("Botão Entrar clicado!");
             const email = event.target.querySelector('input[type="email"]').value;
             const password = event.target.querySelector('input[type="password"]').value;
-
+            
+            console.log("Tentando logar com:", email);
+            alert("Conectando ao servidor... Se demorar, o Render está acordando (demora 50s).");
+    
             fetch(`${API}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             })
-            .then(res => res.json())
+            .then(res => {
+                console.log("Resposta do servidor (Login):", res.status);
+                return res.json();
+            })
             .then(data => {
+                console.log("Dados recebidos:", data);
                 if (data.error) { alert(data.error); return; }
                 localStorage.setItem('gympro_user', JSON.stringify(data));
                 window.location.href = 'index.html';
             })
-            .catch(() => alert("Erro de conexão com o servidor. O Backend está rodando?"));
+            .catch(err => {
+                console.error("Erro no fetch do Login:", err);
+                alert("Erro de conexão. Verifique se o link do Render está correto no código.");
+            });
         }
-
+    
+        // CADASTRO
         function registrarUsuario(event) {
             event.preventDefault();
+            console.log("Botão Cadastrar clicado!");
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
             const birthdate = document.getElementById('reg-birthdate').value;
             const password = document.getElementById('reg-password').value;
             const confirmPassword = document.getElementById('reg-confirm-password').value;
-
+    
             if (password !== confirmPassword) { alert("As senhas não coincidem!"); return; }
-
+    
+            console.log("Enviando cadastro para o Render...");
+            alert("Cadastrando... Se demorar, o Render está acordando (demora 50s).");
+    
             fetch(`${API}/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password, birthdate })
             })
-            .then(res => res.json())
+            .then(res => {
+                console.log("Resposta do servidor (Cadastro):", res.status);
+                return res.json();
+            })
             .then(data => {
+                console.log("Dados recebidos:", data);
                 if (data.error) { alert(data.error); return; }
                 localStorage.setItem('gympro_user', JSON.stringify(data));
-                alert("Cadastro realizado!");
+                alert("Cadastro realizado com sucesso!");
                 window.location.href = 'index.html';
             })
-            .catch(() => alert("Erro de conexão com o servidor. O Backend está rodando?"));
+            .catch(err => {
+                console.error("Erro no fetch do Cadastro:", err);
+                alert("Erro de conexão. Verifique se o link do Render está correto no código.");
+            });
         }
     </script>
 </body>

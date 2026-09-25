@@ -4,7 +4,7 @@ if (!localStorage.getItem('gympro_user')) {
 }
 
 const loggedUser = JSON.parse(localStorage.getItem('gympro_user') || '{}');
-const API = 'http://localhost:3000/api';
+const API = 'https://academax-backend.onrender.com/api';
 
 // Banco de dados em memória (carregado da API)
 let DB = { workouts: [], history: [] };
