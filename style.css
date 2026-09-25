@@ -43,22 +43,16 @@ h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
 .subtitle { color: var(--text-muted); margin-bottom: 25px; font-size: 15px; }
 .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 
-.exercises-library
-
-
-
 /* DASHBOARD GYMTRACK STYLE */
 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 .user-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--bg-input); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--border); }
 .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .user-avatar i { color: var(--text-muted); font-size: 20px; }
-
 .stat-card-v2 { position: relative; }
 .big-number-v2 { font-size: 36px; font-weight: 800; color: var(--text-main); display: flex; align-items: baseline; gap: 5px; margin: 5px 0; }
 .big-number-v2 small { font-size: 14px; color: var(--text-muted); font-weight: 500; }
 .trend-up { font-size: 11px; color: var(--success); font-weight: 600; }
 .progress-circle { width: 60px; height: 60px; border-radius: 50%; border: 4px solid var(--bg-input); border-top: 4px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; margin-top: 10px; }
-
 .chart-card-v2 { padding: 20px; }
 .chart-container-sm { height: 150px; margin-top: 10px; }
 
@@ -67,144 +61,7 @@ h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
 .imc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center; margin-top: 15px; }
 .status-tag { display: inline-block; padding: 5px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-top: 5px; background: var(--bg-input); color: var(--text-main); }
 
-/* =========================================================
-   BIBLIOTECA E LISTA DE ADICIONADOS (VISUAL PREMIUM)
-   ========================================================= */
-
-/* Container da Biblioteca */
-.exercises-library { 
-    background: var(--bg-card); 
-    border: 1px solid var(--border); 
-    border-radius: 16px; 
-    overflow: hidden; 
-    margin-top: 10px;
-}
-
-/* Item individual da biblioteca */
-.exercise-lib-item { 
-    display: flex; 
-    align-items: center; 
-    gap: 15px; 
-    padding: 15px; 
-    border-bottom: 1px solid var(--border);
-    transition: background 0.2s; 
-}
-.exercise-lib-item:last-child { border-bottom: none; }
-.exercise-lib-item:hover { background: rgba(255, 255, 255, 0.02); }
-
-/* Miniatura do exercício */
-.ex-thumb { 
-    width: 55px; 
-    height: 55px; 
-    border-radius: 12px; 
-    object-fit: cover; 
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-} 
-
-/* Informações (Nome e Botão de Vídeo) */
-.ex-info { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 6px; 
-} 
-.ex-info span { 
-    font-size: 15px; 
-    font-weight: 700; 
-    color: var(--text-main);
-} 
-
-/* Botão "Ver Vídeo" estilo Pill (Pílula) */
-.btn-video { 
-    background: rgba(181, 199, 235, 0.1);
-    border: none; 
-    color: var(--primary); 
-    font-size: 11px; 
-    font-weight: 600; 
-    cursor: pointer; 
-    padding: 5px 10px;
-    border-radius: 6px; 
-    text-align: left; 
-    width: fit-content;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: 0.2s;
-}
-.btn-video:hover { background: rgba(181, 199, 235, 0.2); }
-
-/* Botão "+ Add" estilo Outlined */
-.btn-add-lib { 
-    width: auto !important; 
-    margin: 0 !important; 
-    padding: 10px 16px !important; 
-    font-size: 13px !important; 
-    background: transparent !important; 
-    color: var(--text-main) !important; 
-    box-shadow: none !important; 
-    border: 1px solid var(--border);
-    border-radius: 10px; 
-    font-weight: 600; 
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: 0.2s;
-} 
-.btn-add-lib:hover { 
-    background: var(--primary) !important; 
-    color: #0b0c0e !important; 
-    border-color: var(--primary);
-} 
-
-/* Lista de Exercícios Adicionados */
-.added-list { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 10px; 
-    background: rgba(16, 185, 129, 0.05);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-    border-radius: 12px; 
-    padding: 15px; 
-    margin-bottom: 25px;
-} 
-
-/* Item Adicionado */
-.added-item { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    background: var(--bg-input); 
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    padding: 12px 15px; 
-    border-radius: 10px; 
-    animation: fadeIn 0.3s;
-} 
-.added-item span { 
-    font-size: 14px; 
-    font-weight: 600; 
-    color: var(--text-main);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-} 
-.added-item span i { color: var(--success); font-size: 16px; }
-
-/* Botão Remover */
-.btn-remove { 
-    background: transparent; 
-    border: 1px solid var(--danger); 
-    color: var(--danger); 
-    padding: 6px 12px; 
-    border-radius: 8px; 
-    font-size: 12px; 
-    cursor: pointer; 
-    font-weight: 600; 
-    transition: 0.2s;
-} 
-.btn-remove:hover { background: var(--danger); color: white; }
-
-/* CARDS */
+/* CARDS GERAIS */
 .card { background: var(--bg-card); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 .highlight-card { background: linear-gradient(135deg, #181a1f, #1f2024); border: 1px solid rgba(181, 199, 235, 0.3); text-align: left; padding: 25px; }
 .highlight-card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); margin-bottom: 10px; }
@@ -222,7 +79,7 @@ h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
 .big-number { font-size: 28px; font-weight: 800; color: var(--text-main); margin-top: 4px; display: block; }
 .card h3 { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
-/* BOTÕES */
+/* BOTÕES GERAIS */
 .btn-primary, .btn-success, .btn-danger-outline, .btn-danger { border: none; padding: 14px 24px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; width: 100%; transition: transform 0.1s, filter 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-primary { background: var(--primary); color: #0b0c0e; }
 .btn-primary:hover { filter: brightness(1.1); }
@@ -231,7 +88,7 @@ h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
 .btn-danger-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
 .btn-full { width: 100%; margin-top: 12px; }
 
-/* LISTAS */
+/* LISTAS DE TREINO */
 .workouts-list { display: flex; flex-direction: column; gap: 12px; }
 .workout-item { display: flex; flex-direction: column; gap: 15px; background: var(--bg-card); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border); }
 .workout-info h3 { font-size: 16px; color: var(--text-main); font-weight: 700; margin-bottom: 4px; }
@@ -242,36 +99,22 @@ h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
 .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 .btn-start { background: var(--primary); color: #0b0c0e; }
 
-/* INPUTS */
+/* INPUTS GERAIS */
 input, select { width: 100%; background: var(--bg-input); border: 1px solid var(--border); padding: 14px; border-radius: 10px; color: var(--text-main); font-size: 16px; font-family: inherit; margin-bottom: 15px; }
 input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
 label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: block; margin-bottom: 8px; }
 
-/* MODAIS */
+/* MODAIS (Parte Superior) */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: flex-end; z-index: 200; }
 .modal-content { background: var(--bg-main); width: 100%; max-width: 500px; padding: 30px 25px 40px; border-radius: 24px 24px 0 0; border-top: 1px solid var(--border); max-height: 85vh; overflow-y: auto; }
-/* Cabeçalho do Modal (Parte Superior) */
-.modal-content h2 { 
-    font-size: 24px; 
-    font-weight: 800; 
-    margin-bottom: 25px; 
-    text-align: center;
-}
-.modal-content h3 { 
-    font-size: 13px; 
-    color: var(--text-muted); 
-    margin: 25px 0 12px 0; 
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
-    font-weight: 700;
-}
-
+.modal-content h2 { font-size: 24px; font-weight: 800; margin-bottom: 25px; text-align: center; }
+.modal-content h3 { font-size: 13px; color: var(--text-muted); margin: 25px 0 12px 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
 .modal-actions { display: flex; gap: 12px; margin-top: 30px; }
 .modal-actions button { flex: 1; }
 .info-box { background: rgba(181, 199, 235, 0.05); border: 1px solid rgba(181, 199, 235, 0.2); border-radius: 16px; padding: 15px; margin-bottom: 25px; }
 .info-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.6; }
 
-/* MODO TREINO */
+/* MODO TREINO ATIVO */
 .active-workout-container { text-align: center; }
 .progress-bar-container { width: 100%; height: 8px; background: var(--bg-input); border-radius: 10px; margin-bottom: 40px; overflow: hidden; }
 .progress-bar { height: 100%; background: linear-gradient(90deg, var(--success), #34d399); border-radius: 10px; transition: width 0.4s ease; }
@@ -279,39 +122,9 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
 .set-info { font-size: 16px; color: var(--text-muted); margin-bottom: 30px; }
 .timer-display { font-size: 96px; font-weight: 800; color: var(--primary); margin: 20px 0 30px; }
 
-/* RESPONSIVO DESKTOP */
-@media (min-width: 768px) {
-    body { padding: 70px 0 0 260px; }
-    .app-header { padding-left: 260px; }
-    .container { max-width: 100%; padding: 40px; }
-    .navbar { flex-direction: column; justify-content: flex-start; gap: 10px; top: 80px; left: 20px; transform: none; bottom: 20px; width: 240px; height: calc(100vh - 100px); }
-    .nav-btn { flex-direction: row; justify-content: flex-start; font-size: 15px; padding: 15px 20px; width: 100%; }
-    .nav-btn i { font-size: 16px; }
-    .modal-overlay { align-items: center; }
-    .modal-content { border-radius: 24px; border: 1px solid var(--border); }
-}
-/* Esconde o texto da navbar no celular para caber o botão de Admin */
-@media (max-width: 600px) {
-    .nav-btn span {
-        display: none; /* Esconde a palavra */
-    }
-    .nav-btn i {
-        font-size: 20px; /* Aumenta um pouco o ícone para ficar visível */
-    }
-    .nav-btn {
-        padding: 12px; /* Aumenta a área de toque */
-    }
-
-    /* =========================================================
-   ABAS DE GRUPO MUSCULAR (TABS)
-   ========================================================= */
 /* =========================================================
-   BIBLIOTECA E ABAS DE EXERCÍCIOS (VISUAL PREMIUM)
+   ABAS DE EXERCÍCIOS (TABS PREMIUM)
    ========================================================= */
-
-/* Container das Abas */
-/* Container das Abas */
-/* Abas (Tabs) Premium */
 .exercises-tabs {
     display: flex;
     gap: 10px;
@@ -341,25 +154,16 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
     border: 1px solid var(--primary);
     box-shadow: 0 4px 10px rgba(181, 199, 235, 0.1);
 }
-/* Ajuste da Imagem */
-.ex-thumb { 
-    width: 55px; 
-    height: 55px; 
-    border-radius: 12px; 
-    object-fit: cover; 
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-} 
-/* Container da Lista */
+
+/* =========================================================
+   LISTA DA BIBLIOTECA E ADICIONADOS
+   ========================================================= */
 .exercises-library { 
     background: var(--bg-card); 
     border: 1px solid var(--border); 
     border-radius: 16px; 
     overflow: hidden; 
 }
-
-/* Item da Lista */
 .exercise-lib-item { 
     display: flex; 
     align-items: center; 
@@ -371,43 +175,35 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
 .exercise-lib-item:last-child { border-bottom: none; }
 .exercise-lib-item:hover { background: rgba(255, 255, 255, 0.03); }
 
-/* Ícone do Exercício (Substitui a imagem que quebrava) */
 .ex-thumb { 
-    width: 50px; 
-    height: 50px; 
+    width: 55px; 
+    height: 55px; 
     border-radius: 12px; 
-    background: rgba(181, 199, 235, 0.1); 
-    color: var(--primary); 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 20px;
-    border: 1px solid rgba(181, 199, 235, 0.2);
+    object-fit: cover; 
+    background: var(--bg-input);
+    border: 1px solid var(--border);
     flex-shrink: 0;
 } 
-
-/* Informações do Exercício */
 .ex-info { 
     flex: 1; 
     display: flex; 
     flex-direction: column; 
-    gap: 5px; 
+    gap: 6px; 
 } 
 .ex-info span { 
     font-size: 15px; 
     font-weight: 700; 
     color: var(--text-main);
 } 
-
-/* Botão Ver Vídeo */
 .btn-video { 
-    background: transparent;
+    background: rgba(181, 199, 235, 0.1);
     border: none; 
-    color: var(--text-muted); 
-    font-size: 12px; 
+    color: var(--primary); 
+    font-size: 11px; 
     font-weight: 600; 
     cursor: pointer; 
-    padding: 0;
+    padding: 5px 10px;
+    border-radius: 6px; 
     text-align: left; 
     width: fit-content;
     display: inline-flex;
@@ -415,9 +211,8 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
     gap: 5px;
     transition: 0.2s;
 }
-.btn-video:hover { color: var(--primary); }
+.btn-video:hover { background: rgba(181, 199, 235, 0.2); }
 
-/* Botão Adicionar */
 .btn-add-lib { 
     width: auto !important; 
     margin: 0 !important; 
@@ -438,4 +233,63 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
     background: var(--primary) !important; 
     color: #0b0c0e !important; 
     border-color: var(--primary);
-} }
+} 
+
+.added-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    margin-bottom: 25px;
+} 
+.added-item { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background: rgba(16, 185, 129, 0.1); 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 12px 15px; 
+    border-radius: 10px; 
+    animation: fadeIn 0.3s;
+} 
+.added-item span { 
+    font-size: 14px; 
+    font-weight: 600; 
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+} 
+.added-item span i { color: var(--success); font-size: 16px; }
+.btn-remove { 
+    background: transparent; 
+    border: 1px solid var(--danger); 
+    color: var(--danger); 
+    padding: 6px 12px; 
+    border-radius: 8px; 
+    font-size: 12px; 
+    cursor: pointer; 
+    font-weight: 600; 
+    transition: 0.2s;
+} 
+.btn-remove:hover { background: var(--danger); color: white; }
+
+/* =========================================================
+   RESPONSIVIDADE DESKTOP
+   ========================================================= */
+@media (min-width: 768px) {
+    body { padding: 70px 0 0 260px; }
+    .app-header { padding-left: 260px; }
+    .container { max-width: 100%; padding: 40px; }
+    .navbar { flex-direction: column; justify-content: flex-start; gap: 10px; top: 80px; left: 20px; transform: none; bottom: 20px; width: 240px; height: calc(100vh - 100px); }
+    .nav-btn { flex-direction: row; justify-content: flex-start; font-size: 15px; padding: 15px 20px; width: 100%; }
+    .nav-btn i { font-size: 16px; }
+    .modal-overlay { align-items: center; }
+    .modal-content { border-radius: 24px; border: 1px solid var(--border); }
+}
+
+/* Responsividade Mobile (Esconde texto do menu para caber Admin) */
+@media (max-width: 600px) {
+    .nav-btn span { display: none; }
+    .nav-btn i { font-size: 20px; }
+    .nav-btn { padding: 12px; }
+}
