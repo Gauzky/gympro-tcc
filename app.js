@@ -6,7 +6,7 @@ if (!localStorage.getItem('gympro_user')) {
 const loggedUser = JSON.parse(localStorage.getItem('gympro_user') || '{}');
 const API = 'https://academax-backend.onrender.com/api';
 
-// Banco de dados em memória (carregado da API)
+// Banco de dados em memória (carregado da API) 
 let DB = { workouts: [], history: [] };
 
 // Carrega treinos e histórico do banco de dados real
@@ -477,3 +477,122 @@ async function renderClients() {
 // Inicia a aplicação
 checkAdminStatus();
 loadDB();
+// --- CALCULADORA DE IMC E GORDURA ---
+function calculateIMC() {
+    const weight = parseFloat(document.getElementById('calc-weight').value);
+    const heightCm = parseFloat(document.getElementById('calc-height').value);
+    const age = parseFloat(document.getElementById('calc-age').value);
+    const gender = document.getElementById('calc-gender').value;
+    const waist = parseFloat(document.getElementById('calc-waist').value);
+    const neck = parseFloat(document.getElementById('calc-neck').value);
+
+    if (!weight || !heightCm) { alert("Preencha pelo menos peso e altura!"); return; }
+
+    const heightM = heightCm / 100;
+    const imc = weight / (heightM * heightM);
+    
+    let imcClass = "Peso normal";
+    if (imc < 18.5) imcClass = "Abaixo do peso";
+    else if (imc >= 25 && imc < 30) imcClass = "Sobrepeso";
+    else if (imc >= 30) imcClass = "Obesidade";
+
+    let fatPercent = "--";
+    let fatClass = "Preencha cintura e pescoço";
+    
+    if (waist && neck) {
+        if (gender === 'male') {
+            fatPercent = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(heightCm)) - 450;
+        } else {
+            fatPercent = 163.205 * Math.log10(waist + 0 - neck) - 97.684 * Math.log10(heightCm) - 78.387; // Simplificado para feminino
+        }
+        
+        if (fatPercent !== "--" && !isNaN(fatPercent)) {
+            fatPercent = fatPercent.toFixed(1);
+            if (gender === 'male') {
+                if (fatPercent < 6) fatClass = "Essencial";
+                else if (fatPercent < 14) fatClass = "Atleta";
+                else if (fatPercent < 18) fatClass = "Boa forma";
+                else if (fatPercent < 25) fatClass = "Aceitável";
+                else fatClass = "Elevada";
+            } else {
+                if (fatPercent < 14) fatClass = "Essencial";
+                else if (fatPercent < 21) fatClass = "Atleta";
+                else if (fatPercent < 25) fatClass = "Boa forma";
+                else if (fatPercent < 31) fatClass = "Aceitável";
+                else fatClass = "Elevada";
+            }
+        }
+    }
+
+    document.getElementById('res-imc').innerText = imc.toFixed(1);
+    document.getElementById('res-imc-class').innerText = imcClass;
+    document.getElementById('res-fat').innerText = fatPercent;
+    document.getElementById('res-fat-class').innerText = fatClass;
+    
+    document.getElementById('imc-result').classList.remove('hidden');
+    
+    // Atualiza o peso no Dashboard
+    loggedUser.weight = weight;
+    localStorage.setItem('gympro_user', JSON.stringify(loggedUser));
+    document.getElementById('user-weight').innerText = weight;
+}
+
+// --- ATUALIZAR DASHBOARD COM NOVO VISUAL ---
+function renderDashboard() {
+    document.getElementById('user-name').innerText = loggedUser.name || 'Atleta';
+    
+    // Atualiza Avatar
+    const avatarDiv = document.getElementById('user-avatar');
+    if (loggedUser.picture) {
+        avatarDiv.innerHTML = `<img src="${loggedUser.picture}" alt="Foto">`;
+    } else {
+        avatarDiv.innerHTML = `<i class="fa-solid fa-user"></i>`;
+    }
+
+    // Atualiza Peso
+    document.getElementById('user-weight').innerText = loggedUser.weight || '--';
+    
+    // Atualiza Treinos na Semana
+    let treinosSemana = DB.history.filter(h => new Date(h.date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length;
+    document.getElementById('weekly-progress').innerText = treinosSemana;
+
+    document.getElementById('today-workout').innerText = DB.workouts.length > 0 ? `${DB.workouts[0].name} - ${DB.workouts[0].desc}` : "Nenhum treino criado";
+    
+    const resumeBtn = document.getElementById('resume-btn');
+    if (activeWorkout && activeExerciseIndex < flatSets.length) {
+        resumeBtn.style.display = 'flex';
+    } else {
+        resumeBtn.style.display = 'none';
+    }
+
+    // Gráfico de Peso (Mockado para o visual)
+    initWeightChart();
+}
+
+let weightChart = null;
+function initWeightChart() {
+    const ctx = document.getElementById('weightChart').getContext('2d');
+    if (weightChart) weightChart.destroy();
+    
+    // Dados de exemplo (você pode integrar com o banco depois)
+    weightChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+            datasets: [{
+                label: 'Peso (kg)',
+                data: [75, 74.8, 74.5, 74.5, 74.2, 74, 73.8],
+                borderColor: '#b5c7eb',
+                backgroundColor: 'rgba(181, 199, 235, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#6b6e76' } } }
+        }
+    });
+}
