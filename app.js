@@ -429,10 +429,25 @@ async function saveProfile() {
     const newPhone = document.getElementById('edit-phone').value;
     if (!newName) { alert("O nome não pode ficar vazio!"); return; }
     
-    loggedUser.name = newName; loggedUser.picture = newPicture; loggedUser.phone = newPhone;
-    localStorage.setItem('gympro_user', JSON.stringify(loggedUser));
-    alert("Perfil atualizado localmente! (Crie uma rota PUT no backend para salvar no DB)");
-    loadProfileData();
+    try {
+        // Manda os dados para o Render atualizar no banco de dados
+        const res = await fetch(`${API}/users/${loggedUser.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName, picture: newPicture, phone: newPhone })
+        });
+        
+        const data = await res.json();
+        
+        if (data.error) { alert(data.error); return; }
+        
+        // Atualiza a sessão local com os dados que vieram do banco
+        localStorage.setItem('gympro_user', JSON.stringify(data));
+        alert("Perfil atualizado com sucesso no banco de dados!");
+        loadProfileData(); // Volta para a tela de visualização
+    } catch (err) {
+        alert("Erro de conexão. O Render pode estar dormindo (demora 50s).");
+    }
 }
 
 function logout() {

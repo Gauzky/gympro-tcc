@@ -101,6 +101,27 @@ app.get('/api/history/:userId', async (req, res) => {
     const sessions = await prisma.workoutSession.findMany({ where: { userId: req.params.userId } });
     res.json(sessions.map(s => ({ ...s, sets: JSON.parse(s.sets) })));
 });
+// ROTA: Atualizar Perfil (Nome, Telefone, Foto)
+app.put('/api/users/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, picture, phone } = req.body;
+    try {
+        const updatedUser = await prisma.user.update({
+            where: { id },
+            data: { name, picture, phone }
+        });
+        res.json({ 
+            id: updatedUser.id, 
+            name: updatedUser.name, 
+            email: updatedUser.email, 
+            picture: updatedUser.picture, 
+            phone: updatedUser.phone, 
+            isAdmin: updatedUser.isAdmin 
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao atualizar perfil" });
+    }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
