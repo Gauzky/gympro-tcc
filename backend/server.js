@@ -5,7 +5,11 @@ import { PrismaClient } from '@prisma/client';
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(cors());
+const corsOptions = {
+    origin: '*',
+    credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // ROTA: Salvar usuário (quando loga com Google)
