@@ -162,7 +162,6 @@ async function deleteWorkout(id) {
 let currentMuscleTab = "Peito"; // Aba padrão
 
 function renderLibrary() {
-    // Renderiza as abas
     const tabsDiv = document.getElementById('exercises-tabs');
     const muscles = [...new Set(exerciseLibrary.map(ex => ex.muscle))];
     tabsDiv.innerHTML = "";
@@ -170,7 +169,6 @@ function renderLibrary() {
         tabsDiv.innerHTML += `<button class="tab-btn ${m === currentMuscleTab ? 'active-tab' : ''}" onclick="changeMuscleTab('${m}')">${m}</button>`;
     });
 
-    // Renderiza a lista
     const libDiv = document.getElementById('exercises-library');
     libDiv.innerHTML = "";
     const filteredExercises = exerciseLibrary.filter(ex => ex.muscle === currentMuscleTab);
@@ -179,7 +177,7 @@ function renderLibrary() {
         const globalIndex = exerciseLibrary.indexOf(ex);
         libDiv.innerHTML += `
             <div class="exercise-lib-item">
-                <img src="${ex.img}" alt="${ex.name}" class="ex-thumb">
+                <img src="${ex.img}" alt="${ex.name}" class="ex-thumb" onerror="this.onerror=null; this.src='https://placehold.co/200x200/1f2024/b5c7eb?text=AcadeMax';">
                 <div class="ex-info">
                     <span>${ex.name}</span>
                     <button class="btn-video" onclick="openVideo('${ex.video}', '${ex.name}')"><i class="fa-solid fa-circle-play"></i> Ver Vídeo</button>
@@ -189,7 +187,6 @@ function renderLibrary() {
         `;
     });
 }
-
 function changeMuscleTab(muscle) {
     currentMuscleTab = muscle;
     renderLibrary();
