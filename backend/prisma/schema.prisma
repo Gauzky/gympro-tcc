@@ -2,10 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -27,22 +23,22 @@ model User {
 }
 
 model Workout {
-  id          String   @id @default(cuid())
-  name        String
-  desc        String
-  exercises  String   // Salva os exercícios em formato JSON
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  sessions    WorkoutSession[]
+  id         String   @id @default(cuid())
+  name       String
+  desc       String
+  exercises  String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  sessions   WorkoutSession[]
 }
 
 model WorkoutSession {
-  id         String   @id @default(cuid())
-  userId     String
-  workoutId  String
-  date       DateTime @default(now())
-  volume     Float
-  sets       String   // Salva as séries em formato JSON
-  user       User     @relation(fields: [userId], references: [id])
-  workout    Workout  @relation(fields: [workoutId], references: [id])
+  id        String   @id @default(cuid())
+  userId    String
+  workoutId String
+  volume    Float
+  sets      String
+  date      DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  workout   Workout  @relation(fields: [workoutId], references: [id])
 }
