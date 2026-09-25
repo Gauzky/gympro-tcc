@@ -43,6 +43,10 @@ h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
 .subtitle { color: var(--text-muted); margin-bottom: 25px; font-size: 15px; }
 .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 
+.exercises-library
+
+
+
 /* DASHBOARD GYMTRACK STYLE */
 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 .user-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--bg-input); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--border); }
@@ -62,6 +66,143 @@ h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
 .imc-result-card { border: 1px solid var(--primary); background: linear-gradient(135deg, #181a1f, #1f2024); }
 .imc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center; margin-top: 15px; }
 .status-tag { display: inline-block; padding: 5px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-top: 5px; background: var(--bg-input); color: var(--text-main); }
+
+/* =========================================================
+   BIBLIOTECA E LISTA DE ADICIONADOS (VISUAL PREMIUM)
+   ========================================================= */
+
+/* Container da Biblioteca */
+.exercises-library { 
+    background: var(--bg-card); 
+    border: 1px solid var(--border); 
+    border-radius: 16px; 
+    overflow: hidden; 
+    margin-top: 10px;
+}
+
+/* Item individual da biblioteca */
+.exercise-lib-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    padding: 15px; 
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s; 
+}
+.exercise-lib-item:last-child { border-bottom: none; }
+.exercise-lib-item:hover { background: rgba(255, 255, 255, 0.02); }
+
+/* Miniatura do exercício */
+.ex-thumb { 
+    width: 55px; 
+    height: 55px; 
+    border-radius: 12px; 
+    object-fit: cover; 
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+} 
+
+/* Informações (Nome e Botão de Vídeo) */
+.ex-info { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+} 
+.ex-info span { 
+    font-size: 15px; 
+    font-weight: 700; 
+    color: var(--text-main);
+} 
+
+/* Botão "Ver Vídeo" estilo Pill (Pílula) */
+.btn-video { 
+    background: rgba(181, 199, 235, 0.1);
+    border: none; 
+    color: var(--primary); 
+    font-size: 11px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    padding: 5px 10px;
+    border-radius: 6px; 
+    text-align: left; 
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+}
+.btn-video:hover { background: rgba(181, 199, 235, 0.2); }
+
+/* Botão "+ Add" estilo Outlined */
+.btn-add-lib { 
+    width: auto !important; 
+    margin: 0 !important; 
+    padding: 10px 16px !important; 
+    font-size: 13px !important; 
+    background: transparent !important; 
+    color: var(--text-main) !important; 
+    box-shadow: none !important; 
+    border: 1px solid var(--border);
+    border-radius: 10px; 
+    font-weight: 600; 
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+} 
+.btn-add-lib:hover { 
+    background: var(--primary) !important; 
+    color: #0b0c0e !important; 
+    border-color: var(--primary);
+} 
+
+/* Lista de Exercícios Adicionados */
+.added-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px; 
+    padding: 15px; 
+    margin-bottom: 25px;
+} 
+
+/* Item Adicionado */
+.added-item { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background: var(--bg-input); 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 12px 15px; 
+    border-radius: 10px; 
+    animation: fadeIn 0.3s;
+} 
+.added-item span { 
+    font-size: 14px; 
+    font-weight: 600; 
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+} 
+.added-item span i { color: var(--success); font-size: 16px; }
+
+/* Botão Remover */
+.btn-remove { 
+    background: transparent; 
+    border: 1px solid var(--danger); 
+    color: var(--danger); 
+    padding: 6px 12px; 
+    border-radius: 8px; 
+    font-size: 12px; 
+    cursor: pointer; 
+    font-weight: 600; 
+    transition: 0.2s;
+} 
+.btn-remove:hover { background: var(--danger); color: white; }
 
 /* CARDS */
 .card { background: var(--bg-card); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
