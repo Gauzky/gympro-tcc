@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcadeMax - Sistema de Treinos</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0c0e">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.5714 12C20.5714 14.3457 19.6393 16.5942 17.9806 18.2529C16.3219 19.9116 14.0734 20.8437 11.7276 20.8437C9.38189 20.8437 7.13337 19.9116 5.47466 18.2529C3.81595 16.5942 2.88379 14.3457 2.88379 12" stroke="#b5c7eb" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M2.88379 12C2.88379 9.65428 3.81595 7.40576 5.47466 5.74705C7.13337 4.08834 9.38189 3.15619 11.7276 3.15619C14.0734 3.15619 16.3219 4.08834 17.9806 5.74705C19.6393 7.40576 20.5714 9.65428 20.5714 12" stroke="#f2f5f7" stroke-width="2.5" stroke-linecap="round"/>
+                <rect x="9.5" y="2" width="4" height="20" rx="2" fill="#b5c7eb"/>
+            </svg>
+            <div class="logo-text"><span class="logo-ade">ACADE</span><span class="logo-max">MAX</span></div>
+        </div>
+        <div class="header-icon"><i class="fa-solid fa-bell"></i></div>
+    </header>
+
+    <nav class="navbar">
+        <button onclick="navigateTo('dashboard')" class="nav-btn active"><i class="fa-solid fa-grip"></i><span>Início</span></button>
+        <button onclick="navigateTo('workouts')" class="nav-btn"><i class="fa-solid fa-dumbbell"></i><span>Treinos</span></button>
+        <button onclick="navigateTo('progression')" class="nav-btn"><i class="fa-solid fa-chart-line"></i><span>Evolução</span></button>
+        <button onclick="navigateTo('history')" class="nav-btn"><i class="fa-solid fa-clock-rotate-left"></i><span>Histórico</span></button>
+        <button onclick="navigateTo('clients')" class="nav-btn" id="nav-clients" style="display: none;"><i class="fa-solid fa-users"></i><span>Clientes</span></button>
+        <button onclick="navigateTo('profile')" class="nav-btn"><i class="fa-solid fa-user"></i><span>Perfil</span></button>
+    </nav>
+
+    <main class="container">
+        <section id="view-dashboard" class="view active-view">
+            <div class="card highlight-card">
+                <h3>TREINO DE HOJE</h3>
+                <h2 id="today-workout">Treino A - Peito e Tríceps</h2>
+                <div class="highlight-actions">
+                    <button class="btn-primary" onclick="startWorkout()"><i class="fa-solid fa-play"></i> Iniciar</button>
+                    <button class="btn-success btn-resume" id="resume-btn" style="display: none;" onclick="resumeWorkout()"><i class="fa-solid fa-forward-step"></i> Continuar</button>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="card stat-card">
+                    <div class="stat-icon blue"><i class="fa-solid fa-dumbbell"></i></div>
+                    <div><h3>Treinos Feitos</h3><p class="big-number" id="total-workouts">0</p></div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon green"><i class="fa-solid fa-weight-hanging"></i></div>
+                    <div><h3>Volume Total</h3><p class="big-number" id="total-volume">0</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-workouts" class="view">
+            <div class="header-flex">
+                <h1>Meus Treinos</h1>
+                <button class="btn-primary" style="width: auto; margin:0; padding: 10px 15px;" onclick="openCreateWorkoutModal()"><i class="fa-solid fa-plus"></i> Novo</button>
+            </div>
+            <div id="workouts-list" class="workouts-list"></div>
+        </section>
+
+        <section id="view-active-workout" class="view">
+            <div class="active-workout-container">
+                <div class="progress-bar-container"><div class="progress-bar" id="workout-progress" style="width: 0%"></div></div>
+                <div id="rest-timer" class="rest-timer hidden">
+                    <h3>DESCANSO</h3><div class="timer-display" id="timer-display">60</div>
+                    <div class="timer-controls">
+                        <button onclick="adjustTimer(-15)"><i class="fa-solid fa-minus"></i> 15s</button>
+                        <button onclick="adjustTimer(15)">15s <i class="fa-solid fa-plus"></i></button>
+                        <button onclick="skipRest()" class="btn-danger"><i class="fa-solid fa-forward"></i> Pular</button>
+                    </div>
+                </div>
+                <div id="exercise-active-view">
+                    <h2 id="active-exercise-name">Supino Reto</h2>
+                    <p class="set-info">Série <span id="active-set-num">1</span> de <span id="active-total-sets">3</span></p>
+                    <div class="grid-2 active-stats">
+                        <div><span class="label">Repetições</span><input type="number" id="active-reps" value="10"></div>
+                        <div><span class="label">Carga (kg)</span><input type="number" id="active-weight" value="20"></div>
+                    </div>
+                    <button class="btn-success btn-full" onclick="completeSet()"><i class="fa-solid fa-check"></i> Concluir Série</button>
+                    <button class="btn-danger-outline btn-full" onclick="finishWorkout()"><i class="fa-solid fa-flag-checkered"></i> Finalizar Treino</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-progression" class="view">
+            <h1>Sua Evolução</h1>
+            <p class="subtitle">Acompanhe seu progresso de carga nos exercícios.</p>
+            <div class="grid-prog-stats">
+                <div class="card stat-card"><h3>Carga (Semana)</h3><p class="big-number stat-blue" id="stat-week">0 kg</p></div>
+                <div class="card stat-card"><h3>Carga (Mês)</h3><p class="big-number stat-purple" id="stat-month">0 kg</p></div>
+                <div class="card stat-card"><h3>Carga (Ano)</h3><p class="big-number stat-green" id="stat-year">0 kg</p></div>
+            </div>
+            <div class="grid-prog-layout">
+                <div>
+                    <div class="card">
+                        <label>Selecione o Exercício</label>
+                        <select id="progression-select" onchange="loadExerciseProgression(this.value)">
+                            <option value="">Selecione um exercício...</option>
+                        </select>
+                    </div>
+                    <div id="progression-stats" class="grid-2 hidden">
+                        <div class="card"><h3>Carga Inicial</h3><p class="big-number" id="prog-start-weight" style="color: var(--text-muted); font-size: 24px;">0 kg</p></div>
+                        <div class="card"><h3>Carga Máxima</h3><p class="big-number" id="prog-max-weight">0 kg</p></div>
+                    </div>
+                    <div id="progression-list" class="workouts-list" style="margin-top: 20px;"></div>
+                </div>
+                <div class="card chart-card">
+                    <h3>Gráfico de Progressão de Carga</h3>
+                    <div class="chart-container"><canvas id="progressionChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-history" class="view">
+            <h1>Histórico de Treinos</h1>
+            <div id="history-list" class="workouts-list"></div>
+        </section>
+
+        <section id="view-clients" class="view">
+            <h1>Clientes Cadastrados</h1>
+            <p class="subtitle">Lista de todos os usuários que criaram conta no sistema.</p>
+            <div id="clients-list" class="workouts-list"></div>
+        </section>
+
+        <section id="view-manage-client" class="view">
+            <div class="header-flex">
+                <h1 id="manage-client-title">Gerenciar Cliente</h1>
+                <button class="btn-primary" style="width: auto; margin:0; padding: 10px 15px;" onclick="navigateTo('clients')"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+            </div>
+            <div id="manage-client-content"></div>
+        </section>
+
+        <section id="view-profile" class="view"></section>
+    </main>
+
+    <!-- MODAL: Criar/Editar Treino -->
+    <div id="create-workout-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 id="form-modal-title">Criar Novo Treino</h2>
+            <input type="text" id="new-workout-name" placeholder="Nome (Ex: Treino A)">
+            <input type="text" id="new-workout-desc" placeholder="Descrição (Ex: Peito e Tríceps)">
+            <h3>Exercícios Adicionados (<span id="added-count">0</span>)</h3>
+            <div id="added-exercises-list" class="added-list"></div>
+            <h3>Biblioteca de Exercícios</h3>
+            <div id="exercises-library" class="exercises-library"></div>
+            <div class="modal-actions">
+                <button class="btn-danger-outline" onclick="closeCreateModal()"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+                <button class="btn-primary" id="save-workout-btn" onclick="saveNewWorkout()"><i class="fa-solid fa-check"></i> Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Configurar Séries -->
+    <div id="exercise-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 id="modal-title">Configurar Exercício</h2>
+            <div class="info-box">
+                <p><strong>Séries:</strong> Quantas vezes você vai fazer o grupo de movimentos. (Ex: 3 séries).</p>
+                <p><strong>Repetições:</strong> Quantas vezes você vai levantar o peso seguidas. (Ex: 10 movimentos).</p>
+                <p><strong>Carga (Peso):</strong> O peso que você vai colocar no aparelho. (Ex: 20 kg).</p>
+            </div>
+            <label>Quantidade de Séries</label>
+            <div class="counter">
+                <button onclick="adjustSets(-1)"><i class="fa-solid fa-minus"></i></button><span id="sets-count">3</span><button onclick="adjustSets(1)"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <div id="sets-config-container"></div>
+            <div class="modal-actions">
+                <button class="btn-danger-outline" onclick="closeModal()"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+                <button class="btn-primary" onclick="saveExercise()"><i class="fa-solid fa-plus"></i> Adicionar ao Treino</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Vídeo -->
+    <div id="video-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 600px; text-align: center;">
+            <button class="btn-danger-outline" style="width: auto; margin-left: auto; display: block;" onclick="closeVideoModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="video-title" style="margin-bottom: 15px;"></h2>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
+                <iframe id="video-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js?v=6"></script>
+</body>
+</html>
