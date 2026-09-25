@@ -118,10 +118,10 @@ function renderHistory() {
     });
 }
 
-function openVideo(videoId, name) {
-    document.getElementById('video-title').innerText = name;
-    document.getElementById('video-iframe').src = `https://www.youtube.com/embed/${videoId}`;
-    document.getElementById('video-modal').classList.remove('hidden');
+// Abre uma busca no YouTube com o nome do exercício
+function openVideo(name) {
+    const searchUrl = `https://www.youtube.com/results?search_query=Como+fazer+${encodeURIComponent(name)}`;
+    window.open(searchUrl, '_blank');
 }
 function closeVideoModal() { document.getElementById('video-iframe').src = ""; document.getElementById('video-modal').classList.add('hidden'); }
 
@@ -180,7 +180,7 @@ function renderLibrary() {
                 <img src="${ex.img}" alt="${ex.name}" class="ex-thumb" onerror="this.onerror=null; this.src='https://placehold.co/200x200/1f2024/b5c7eb?text=AcadeMax';">
                 <div class="ex-info">
                     <span>${ex.name}</span>
-                    <button class="btn-video" onclick="openVideo('${ex.video}', '${ex.name}')"><i class="fa-solid fa-circle-play"></i> Ver Vídeo</button>
+                    <button class="btn-video" onclick="openVideo('${ex.name}')"><i class="fa-solid fa-circle-play"></i> Ver Vídeo</button>
                 </div>
                 <button class="btn-add-lib" onclick="openExerciseConfig(${globalIndex})"><i class="fa-solid fa-plus"></i> Add</button>
             </div>
