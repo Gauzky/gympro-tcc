@@ -120,8 +120,15 @@ app.post('/api/history', async (req, res) => {
 
 // ROTA: Pegar Histórico de um usuário
 app.get('/api/history/:userId', async (req, res) => {
-    const sessions = await prisma.workoutSession.findMany({ where: { userId: req.params.userId } });
-    res.json(sessions.map(s => ({ ...s, sets: JSON.parse(s.sets) })));
+    const sessions = await prisma.workoutSession.findMany({ 
+        where: { userId: req.params.userId },
+        include: { workout: true } // Puxa os dados do treino (incluindo o nome)
+    });
+    res.json(sessions.map(s => ({ 
+        ...s, 
+        sets: JSON.parse(s.sets),
+        workoutName: s.workout.name // Adiciona o nome do treino na resposta final
+    })));
 });
 
 const PORT = process.env.PORT || 3000;
