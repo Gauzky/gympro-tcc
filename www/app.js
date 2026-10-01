@@ -6,7 +6,9 @@ if (!localStorage.getItem('gympro_user')) {
 const loggedUser = JSON.parse(localStorage.getItem('gympro_user') || '{}');
 const API = 'https://academax-backend.onrender.com/api';
 
-// Banco de dados em memória (carregado da API) 
+// Variáveis globais
+let targetUserIdForWorkout = null;
+let globalClients = [];
 let DB = { workouts: [], history: [] };
 
 // Carrega treinos e histórico do banco de dados real
@@ -25,10 +27,6 @@ async function loadDB() {
         console.error("Erro ao carregar banco de dados:", error);
     }
 }
-
-// Variáveis globais para o Admin gerenciar clientes
-let currentViewingClientEmail = null;
-let targetUserEmailForWorkout = null;
 
 const exerciseLibrary = [
     // PEITO
@@ -60,6 +58,7 @@ const exerciseLibrary = [
     { name: "Abdominal Supra", muscle: "Abdômen", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2dcb?auto=format&fit=crop&w=200&q=80", video: "IODKqqHjHnI" },
     { name: "Prancha", muscle: "Abdômen", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=200&q=80", video: "ASdvN98wQ" }
 ];
+
 function navigateTo(viewName) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
     document.getElementById(`view-${viewName}`).classList.add('active-view');
@@ -123,10 +122,10 @@ function openVideo(name) {
     const searchUrl = `https://www.youtube.com/results?search_query=Como+fazer+${encodeURIComponent(name)}`;
     window.open(searchUrl, '_blank');
 }
-function closeVideoModal() { document.getElementById('video-iframe').src = ""; document.getElementById('video-modal').classList.add('hidden'); }
 
 let tempExercisesToAdd = [];
 let editingWorkoutId = null;
+let currentMuscleTab = "Peito";
 
 function openCreateWorkoutModal() {
     editingWorkoutId = null; tempExercisesToAdd = [];
@@ -152,14 +151,11 @@ function editWorkout(id) {
 
 async function deleteWorkout(id) {
     if (confirm("Excluir este treino?")) {
-        // Idealmente chamar a API para deletar, aqui só removemos da tela
         DB.workouts = DB.workouts.filter(w => w.id !== id);
         renderWorkouts();
-        alert("Treino excluído (localmente). Para excluir do banco, crie uma rota DELETE no backend.");
+        alert("Treino excluído da tela. (Crie a rota DELETE no backend para remover do banco de dados permanently)");
     }
 }
-
-let currentMuscleTab = "Peito"; // Aba padrão
 
 function renderLibrary() {
     const tabsDiv = document.getElementById('exercises-tabs');
@@ -187,6 +183,7 @@ function renderLibrary() {
         `;
     });
 }
+
 function changeMuscleTab(muscle) {
     currentMuscleTab = muscle;
     renderLibrary();
@@ -206,7 +203,7 @@ function renderAddedExercises() {
 }
 
 function removeAddedExercise(index) { tempExercisesToAdd.splice(index, 1); renderAddedExercises(); }
-function closeCreateModal() { targetUserEmailForWorkout = null; document.getElementById('create-workout-modal').classList.add('hidden'); }
+function closeCreateModal() { targetUserIdForWorkout = null; document.getElementById('create-workout-modal').classList.add('hidden'); }
 
 let currentExerciseConfig = null;
 let tempSetsCount = 3;
@@ -248,18 +245,30 @@ async function saveNewWorkout() {
     const desc = document.getElementById('new-workout-desc').value;
     if (!name || tempExercisesToAdd.length === 0) { alert("Dê um nome e adicione exercícios."); return; }
 
-    const newWorkout = { id: Date.now().toString(), name, desc, exercises: tempExercisesToAdd };
+    const userId = targetUserIdForWorkout || loggedUser.id;
 
-    // Manda para a API (Banco de dados real)
     await fetch(`${API}/workouts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, desc, exercises: tempExercisesToAdd, userId: loggedUser.id })
+        body: JSON.stringify({ name, desc, exercises: tempExercisesToAdd, userId })
     });
 
-    if (!editingWorkoutId) DB.workouts.push(newWorkout);
+    if (!targetUserIdForWorkout) {
+        const newWorkout = { id: Date.now().toString(), name, desc, exercises: tempExercisesToAdd };
+        if (editingWorkoutId) {
+            const workout = DB.workouts.find(w => w.id === editingWorkoutId);
+            workout.name = name; workout.desc = desc; workout.exercises = tempExercisesToAdd;
+        } else {
+            DB.workouts.push(newWorkout);
+        }
+        renderWorkouts();
+    } else {
+        viewClient(targetUserIdForWorkout);
+    }
+    
     editingWorkoutId = null;
-    closeCreateModal(); renderWorkouts();
+    targetUserIdForWorkout = null;
+    closeCreateModal(); 
 }
 
 // --- LÓGICA DO MODO TREINO ATIVO ---
@@ -331,7 +340,6 @@ async function finishWorkout() {
         let volume = 0;
         flatSets.forEach(s => { if (s.actualReps && s.actualWeight) volume += (s.actualReps * s.actualWeight); });
         
-        // Salva no Banco de Dados
         await fetch(`${API}/history`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -468,21 +476,16 @@ async function saveProfile() {
     if (!newName) { alert("O nome não pode ficar vazio!"); return; }
     
     try {
-        // Manda os dados para o Render atualizar no banco de dados
         const res = await fetch(`${API}/users/${loggedUser.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: newName, picture: newPicture, phone: newPhone })
         });
-        
         const data = await res.json();
-        
         if (data.error) { alert(data.error); return; }
-        
-        // Atualiza a sessão local com os dados que vieram do banco
         localStorage.setItem('gympro_user', JSON.stringify(data));
         alert("Perfil atualizado com sucesso no banco de dados!");
-        loadProfileData(); // Volta para a tela de visualização
+        loadProfileData();
     } catch (err) {
         alert("Erro de conexão. O Render pode estar dormindo (demora 50s).");
     }
@@ -505,11 +508,11 @@ async function renderClients() {
     const list = document.getElementById('clients-list');
     list.innerHTML = "<p class='subtitle'>Carregando clientes...</p>";
     const res = await fetch(`${API}/users`);
-    const clientsDB = await res.json();
+    globalClients = await res.json();
     
-    if (clientsDB.length === 0) { list.innerHTML = "<p class='subtitle'>Nenhum cliente cadastrado.</p>"; return; }
+    if (globalClients.length === 0) { list.innerHTML = "<p class='subtitle'>Nenhum cliente cadastrado.</p>"; return; }
     list.innerHTML = "";
-    clientsDB.forEach(u => {
+    globalClients.forEach(u => {
         list.innerHTML += `
             <div class="workout-item" style="flex-direction: row; align-items: center; gap: 15px;">
                 <div class="workout-info" style="display: flex; align-items: center; gap: 15px;">
@@ -522,130 +525,111 @@ async function renderClients() {
                         <p style="font-size: 13px;">${u.email}</p>
                     </div>
                 </div>
+                <button class="btn-action btn-edit" onclick="viewClient('${u.id}')"><i class="fa-solid fa-gear"></i> Gerenciar</button>
             </div>
         `;
     });
 }
 
+async function viewClient(id) {
+    const client = globalClients.find(u => u.id === id);
+    if (!client) return;
+
+    document.getElementById('manage-client-title').innerText = "Gerenciar: " + client.name;
+    document.getElementById('manage-client-content').innerHTML = "<p class='subtitle'>Carregando dados...</p>";
+
+    let workoutsHTML = "<p class='subtitle'>Nenhum treino recomendado ainda.</p>";
+    try {
+        const resWorkouts = await fetch(`${API}/workouts/${id}`);
+        const clientWorkouts = await resWorkouts.json();
+        
+        if (clientWorkouts.length > 0) {
+            workoutsHTML = "";
+            clientWorkouts.forEach(w => {
+                workoutsHTML += `
+                    <div class="workout-item">
+                        <div class="workout-info">
+                            <h3>${w.name}</h3>
+                            <p>${w.desc} - ${w.exercises.length} exercícios</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    } catch (err) {
+        workoutsHTML = "<p class='subtitle'>Erro ao carregar treinos. O Render pode estar dormindo.</p>";
+    }
+
+    document.getElementById('manage-client-content').innerHTML = `
+        <div class="card">
+            <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-user-pen"></i> Editar Perfil do Cliente</h3>
+            <input type="text" id="admin-edit-name" value="${client.name}" placeholder="Nome" style="margin-bottom: 10px;">
+            <input type="text" id="admin-edit-picture" value="${client.picture || ''}" placeholder="URL da Foto" style="margin-bottom: 10px;">
+            <input type="tel" id="admin-edit-phone" value="${client.phone || ''}" placeholder="Telefone" style="margin-bottom: 15px;">
+            <button class="btn-primary btn-full" onclick="adminSaveClient('${id}')"><i class="fa-solid fa-check"></i> Salvar Alterações</button>
+        </div>
+
+        <div class="card">
+            <div class="header-flex" style="margin-bottom: 15px;">
+                <h3 style="margin:0;"><i class="fa-solid fa-dumbbell"></i> Treinos Recomendados</h3>
+                <button class="btn-primary" style="width: auto; margin:0; padding: 10px 15px; font-size: 14px;" onclick="adminAddWorkout('${id}')"><i class="fa-solid fa-plus"></i> Recomendar Treino</button>
+            </div>
+            <div class="workouts-list">${workoutsHTML}</div>
+        </div>
+
+        <div class="card" style="border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05);">
+            <h3 style="margin-bottom: 15px; color: var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> Zona de Perigo</h3>
+            <button class="btn-danger btn-full" onclick="adminDeleteClient('${id}')"><i class="fa-solid fa-trash-can"></i> Excluir Conta Permanentemente</button>
+        </div>
+    `;
+    navigateTo('manage-client');
+}
+
+async function adminSaveClient(id) {
+    const newName = document.getElementById('admin-edit-name').value;
+    const newPicture = document.getElementById('admin-edit-picture').value;
+    const newPhone = document.getElementById('admin-edit-phone').value;
+    
+    try {
+        const res = await fetch(`${API}/users/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName, picture: newPicture, phone: newPhone })
+        });
+        const data = await res.json();
+        if (data.error) { alert(data.error); return; }
+        
+        const index = globalClients.findIndex(u => u.id === id);
+        if (index >= 0) globalClients[index] = data;
+        
+        alert("Perfil do cliente atualizado com sucesso no banco de dados!");
+        viewClient(id);
+    } catch (err) {
+        alert("Erro de conexão. O Render pode estar dormindo.");
+    }
+}
+
+async function adminDeleteClient(id) {
+    if (confirm("Tem certeza que deseja EXCLUIR este cliente permanentemente? Esta ação apagará todos os dados dele do banco.")) {
+        try {
+            const res = await fetch(`${API}/users/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.error) { alert(data.error); return; }
+            
+            alert("Cliente excluído com sucesso!");
+            navigateTo('clients');
+            renderClients();
+        } catch (err) {
+            alert("Erro de conexão. O Render pode estar dormindo.");
+        }
+    }
+}
+
+function adminAddWorkout(id) {
+    targetUserIdForWorkout = id;
+    openCreateWorkoutModal();
+}
+
 // Inicia a aplicação
 checkAdminStatus();
 loadDB();
-// --- CALCULADORA DE IMC E GORDURA ---
-function calculateIMC() {
-    const weight = parseFloat(document.getElementById('calc-weight').value);
-    const heightCm = parseFloat(document.getElementById('calc-height').value);
-    const age = parseFloat(document.getElementById('calc-age').value);
-    const gender = document.getElementById('calc-gender').value;
-    const waist = parseFloat(document.getElementById('calc-waist').value);
-    const neck = parseFloat(document.getElementById('calc-neck').value);
-
-    if (!weight || !heightCm) { alert("Preencha pelo menos peso e altura!"); return; }
-
-    const heightM = heightCm / 100;
-    const imc = weight / (heightM * heightM);
-    
-    let imcClass = "Peso normal";
-    if (imc < 18.5) imcClass = "Abaixo do peso";
-    else if (imc >= 25 && imc < 30) imcClass = "Sobrepeso";
-    else if (imc >= 30) imcClass = "Obesidade";
-
-    let fatPercent = "--";
-    let fatClass = "Preencha cintura e pescoço";
-    
-    if (waist && neck) {
-        if (gender === 'male') {
-            fatPercent = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(heightCm)) - 450;
-        } else {
-            fatPercent = 163.205 * Math.log10(waist + 0 - neck) - 97.684 * Math.log10(heightCm) - 78.387; // Simplificado para feminino
-        }
-        
-        if (fatPercent !== "--" && !isNaN(fatPercent)) {
-            fatPercent = fatPercent.toFixed(1);
-            if (gender === 'male') {
-                if (fatPercent < 6) fatClass = "Essencial";
-                else if (fatPercent < 14) fatClass = "Atleta";
-                else if (fatPercent < 18) fatClass = "Boa forma";
-                else if (fatPercent < 25) fatClass = "Aceitável";
-                else fatClass = "Elevada";
-            } else {
-                if (fatPercent < 14) fatClass = "Essencial";
-                else if (fatPercent < 21) fatClass = "Atleta";
-                else if (fatPercent < 25) fatClass = "Boa forma";
-                else if (fatPercent < 31) fatClass = "Aceitável";
-                else fatClass = "Elevada";
-            }
-        }
-    }
-
-    document.getElementById('res-imc').innerText = imc.toFixed(1);
-    document.getElementById('res-imc-class').innerText = imcClass;
-    document.getElementById('res-fat').innerText = fatPercent;
-    document.getElementById('res-fat-class').innerText = fatClass;
-    
-    document.getElementById('imc-result').classList.remove('hidden');
-    
-    // Atualiza o peso no Dashboard
-    loggedUser.weight = weight;
-    localStorage.setItem('gympro_user', JSON.stringify(loggedUser));
-    document.getElementById('user-weight').innerText = weight;
-}
-
-// --- ATUALIZAR DASHBOARD COM NOVO VISUAL ---
-function renderDashboard() {
-    document.getElementById('user-name').innerText = loggedUser.name || 'Atleta';
-    
-    // Atualiza Avatar
-    const avatarDiv = document.getElementById('user-avatar');
-    if (loggedUser.picture) {
-        avatarDiv.innerHTML = `<img src="${loggedUser.picture}" alt="Foto">`;
-    } else {
-        avatarDiv.innerHTML = `<i class="fa-solid fa-user"></i>`;
-    }
-
-    // Atualiza Peso
-    document.getElementById('user-weight').innerText = loggedUser.weight || '--';
-    
-    // Atualiza Treinos na Semana
-    let treinosSemana = DB.history.filter(h => new Date(h.date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length;
-    document.getElementById('weekly-progress').innerText = treinosSemana;
-
-    document.getElementById('today-workout').innerText = DB.workouts.length > 0 ? `${DB.workouts[0].name} - ${DB.workouts[0].desc}` : "Nenhum treino criado";
-    
-    const resumeBtn = document.getElementById('resume-btn');
-    if (activeWorkout && activeExerciseIndex < flatSets.length) {
-        resumeBtn.style.display = 'flex';
-    } else {
-        resumeBtn.style.display = 'none';
-    }
-
-    // Gráfico de Peso (Mockado para o visual)
-    initWeightChart();
-}
-
-let weightChart = null;
-function initWeightChart() {
-    const ctx = document.getElementById('weightChart').getContext('2d');
-    if (weightChart) weightChart.destroy();
-    
-    // Dados de exemplo (você pode integrar com o banco depois)
-    weightChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-            datasets: [{
-                label: 'Peso (kg)',
-                data: [75, 74.8, 74.5, 74.5, 74.2, 74, 73.8],
-                borderColor: '#b5c7eb',
-                backgroundColor: 'rgba(181, 199, 235, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#6b6e76' } } }
-        }
-    });
-}

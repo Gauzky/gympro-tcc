@@ -35,76 +35,57 @@
     </nav>
 
     <main class="container">
-        <!-- DASHBOARD ESTILO GYMTRACK -->
+        <!-- DASHBOARD -->
         <section id="view-dashboard" class="view active-view">
-            <div class="dashboard-header">
-                <div>
-                    <p class="subtitle" style="margin-bottom: 0;">Bem-vindo de volta,</p>
-                    <h1 id="user-name" style="margin-bottom: 0;">Atleta</h1>
-                </div>
-                <div class="user-avatar" id="user-avatar"></div>
+            <h1>Olá, <span id="user-name">Atleta</span> <i class="fa-solid fa-hand-fist" style="color: var(--primary);"></i></h1>
+            <p class="subtitle">Pronto para suar hoje?</p>
+            
+            <div class="card highlight-card">
+                <h3>Treino de Hoje</h3>
+                <h2 id="today-workout">Nenhum treino criado</h2>
+                <button class="btn-primary" onclick="startWorkout()"><i class="fa-solid fa-play"></i> Iniciar Treino</button>
+                <button class="btn-success" id="resume-btn" style="display: none; margin-top: 10px;" onclick="resumeWorkout()"><i class="fa-solid fa-forward-step"></i> Continuar Treino</button>
             </div>
 
             <div class="grid-2">
-                <div class="card stat-card-v2">
-                    <h3>Peso Atual</h3>
-                    <p class="big-number-v2"><span id="user-weight">--</span><small>kg</small></p>
-                    <div class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> Atualize nas Ferramentas</div>
-                </div>
-                <div class="card stat-card-v2">
-                    <h3>Treinos Semana</h3>
-                    <div class="progress-circle">
-                        <span id="weekly-progress">0</span>
-                    </div>
-                </div>
+                <div class="card"><h3>Treinos Criados</h3><p class="big-number" id="total-workouts">0</p></div>
+                <div class="card"><h3>Volume Total (kg)</h3><p class="big-number" id="total-volume">0</p></div>
             </div>
 
-            <div class="card chart-card-v2">
+            <!-- GRÁFICO DE PESO (APENAS AQUI) -->
+            <div class="card">
                 <div class="header-flex" style="margin-bottom: 15px;">
                     <h3 style="margin:0;">Evolução de Peso</h3>
                     <i class="fa-solid fa-weight-scale" style="color: var(--primary)"></i>
                 </div>
-                <div class="chart-container-sm"><canvas id="weightChart"></canvas></div>
-            </div>
-
-            <div class="card highlight-card">
-                <h3>TREINO DE HOJE</h3>
-                <h2 id="today-workout">Treino A - Peito e Tríceps</h2>
-                <div class="highlight-actions">
-                    <button class="btn-primary" onclick="startWorkout()"><i class="fa-solid fa-play"></i> Iniciar</button>
-                    <button class="btn-success btn-resume" id="resume-btn" style="display: none;" onclick="resumeWorkout()"><i class="fa-solid fa-forward-step"></i> Continuar</button>
+                <div style="height: 200px; position: relative;">
+                    <canvas id="weightChart"></canvas>
                 </div>
             </div>
         </section>
 
-        <!-- NOVA TELA: FERRAMENTAS (IMC) -->
+        <!-- FERRAMENTAS (IMC) -->
         <section id="view-tools" class="view">
             <h1>Calculadora de IMC</h1>
             <p class="subtitle">Calcule seu Índice de Massa Corporal e Estimativa de Gordura.</p>
             
             <div class="card">
                 <label>Peso (kg)</label>
-                <input type="number" id="calc-weight" placeholder="Ex: 70" value="70">
-                
+                <input type="number" id="calc-weight" placeholder="Ex: 70" value="70" style="margin-bottom: 15px;">
                 <label>Altura (cm)</label>
-                <input type="number" id="calc-height" placeholder="Ex: 175" value="175">
-                
+                <input type="number" id="calc-height" placeholder="Ex: 175" value="175" style="margin-bottom: 15px;">
                 <label>Idade</label>
-                <input type="number" id="calc-age" placeholder="Ex: 25" value="25">
-                
+                <input type="number" id="calc-age" placeholder="Ex: 25" value="25" style="margin-bottom: 15px;">
                 <label>Sexo</label>
-                <select id="calc-gender">
+                <select id="calc-gender" style="margin-bottom: 15px;">
                     <option value="male">Masculino</option>
                     <option value="female">Feminino</option>
                 </select>
-                
                 <label>Cintura (cm) - Opcional</label>
-                <input type="number" id="calc-waist" placeholder="Ex: 80">
-                
+                <input type="number" id="calc-waist" placeholder="Ex: 80" style="margin-bottom: 15px;">
                 <label>Pescoço (cm) - Opcional</label>
-                <input type="number" id="calc-neck" placeholder="Ex: 38">
-
-                <button class="btn-primary" style="margin-top: 20px;" onclick="calculateIMC()"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                <input type="number" id="calc-neck" placeholder="Ex: 38" style="margin-bottom: 20px;">
+                <button class="btn-primary" onclick="calculateIMC()"><i class="fa-solid fa-calculator"></i> Calcular</button>
             </div>
 
             <div id="imc-result" class="card imc-result-card hidden">
@@ -112,18 +93,19 @@
                 <div class="imc-grid">
                     <div>
                         <span class="label">Seu IMC</span>
-                        <p class="big-number-v2"><span id="res-imc">0</span></p>
+                        <p class="big-number"><span id="res-imc">0</span></p>
                         <small id="res-imc-class" class="status-tag">--</small>
                     </div>
                     <div>
                         <span class="label">% de Gordura</span>
-                        <p class="big-number-v2"><span id="res-fat">0</span><small>%</small></p>
+                        <p class="big-number"><span id="res-fat">0</span><small>%</small></p>
                         <small id="res-fat-class" class="status-tag">--</small>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- TREINOS -->
         <section id="view-workouts" class="view">
             <div class="header-flex">
                 <h1>Meus Treinos</h1>
@@ -132,6 +114,7 @@
             <div id="workouts-list" class="workouts-list"></div>
         </section>
 
+        <!-- MODO TREINO ATIVO -->
         <section id="view-active-workout" class="view">
             <div class="active-workout-container">
                 <div class="progress-bar-container"><div class="progress-bar" id="workout-progress" style="width: 0%"></div></div>
@@ -156,6 +139,7 @@
             </div>
         </section>
 
+        <!-- EVOLUÇÃO -->
         <section id="view-progression" class="view">
             <h1>Sua Evolução</h1>
             <p class="subtitle">Acompanhe seu progresso de carga nos exercícios.</p>
@@ -185,17 +169,20 @@
             </div>
         </section>
 
+        <!-- HISTÓRICO -->
         <section id="view-history" class="view">
             <h1>Histórico de Treinos</h1>
             <div id="history-list" class="workouts-list"></div>
         </section>
 
+        <!-- CLIENTES (ADMIN) -->
         <section id="view-clients" class="view">
             <h1>Clientes Cadastrados</h1>
             <p class="subtitle">Lista de todos os usuários que criaram conta no sistema.</p>
             <div id="clients-list" class="workouts-list"></div>
         </section>
 
+        <!-- GERENCIAR CLIENTE (ADMIN) -->
         <section id="view-manage-client" class="view">
             <div class="header-flex">
                 <h1 id="manage-client-title">Gerenciar Cliente</h1>
@@ -204,6 +191,7 @@
             <div id="manage-client-content"></div>
         </section>
 
+        <!-- PERFIL -->
         <section id="view-profile" class="view"></section>
     </main>
 
@@ -215,9 +203,9 @@
             <input type="text" id="new-workout-desc" placeholder="Descrição (Ex: Peito e Tríceps)">
             <h3>Exercícios Adicionados (<span id="added-count">0</span>)</h3>
             <div id="added-exercises-list" class="added-list"></div>
-           <h3>Biblioteca de Exercícios</h3>
-<div id="exercises-tabs" class="exercises-tabs"></div>
-<div id="exercises-library" class="exercises-library"></div>
+            <h3>Biblioteca de Exercícios</h3>
+            <div id="exercises-tabs" class="exercises-tabs"></div>
+            <div id="exercises-library" class="exercises-library"></div>
             <div class="modal-actions">
                 <button class="btn-danger-outline" onclick="closeCreateModal()"><i class="fa-solid fa-xmark"></i> Cancelar</button>
                 <button class="btn-primary" id="save-workout-btn" onclick="saveNewWorkout()"><i class="fa-solid fa-check"></i> Salvar</button>
@@ -246,18 +234,7 @@
         </div>
     </div>
 
-    <!-- MODAL: Vídeo -->
-    <div id="video-modal" class="modal-overlay hidden">
-        <div class="modal-content" style="max-width: 600px; text-align: center;">
-            <button class="btn-danger-outline" style="width: auto; margin-left: auto; display: block;" onclick="closeVideoModal()"><i class="fa-solid fa-xmark"></i></button>
-            <h2 id="video-title" style="margin-bottom: 15px;"></h2>
-            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
-                <iframe id="video-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="" allowfullscreen></iframe>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=10"></script>
 </body>
 </html>
