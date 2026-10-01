@@ -130,6 +130,38 @@ app.get('/api/history/:userId', async (req, res) => {
         workoutName: s.workout.name // Adiciona o nome do treino na resposta final
     })));
 });
+// ROTA: Atualizar Perfil (Admin edita cliente)
+app.put('/api/users/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, picture, phone } = req.body;
+    try {
+        const updatedUser = await prisma.user.update({
+            where: { id },
+            data: { name, picture, phone }
+        });
+        res.json({ 
+            id: updatedUser.id, 
+            name: updatedUser.name, 
+            email: updatedUser.email, 
+            picture: updatedUser.picture, 
+            phone: updatedUser.phone, 
+            isAdmin: updatedUser.isAdmin 
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao atualizar perfil" });
+    }
+});
+
+// ROTA: Excluir Cliente (Admin exclui cliente)
+app.delete('/api/users/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.user.delete({ where: { id } });
+        res.json({ message: "Cliente deletado com sucesso" });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao deletar cliente" });
+    }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
