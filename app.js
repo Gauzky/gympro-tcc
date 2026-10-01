@@ -5,11 +5,10 @@ if (!localStorage.getItem('gympro_user')) {
 
 const loggedUser = JSON.parse(localStorage.getItem('gympro_user') || '{}');
 const API = 'https://academax-backend.onrender.com/api';
+
+// Variáveis globais
 let targetUserIdForWorkout = null;
 let globalClients = [];
-
-
-// Banco de dados em memória (carregado da API) 
 let DB = { workouts: [], history: [] };
 
 // Carrega treinos e histórico do banco de dados real
@@ -28,10 +27,6 @@ async function loadDB() {
         console.error("Erro ao carregar banco de dados:", error);
     }
 }
-
-// Variáveis globais para o Admin gerenciar clientes
-let currentViewingClientEmail = null;
-let targetUserEmailForWorkout = null;
 
 const exerciseLibrary = [
     // PEITO
@@ -63,6 +58,7 @@ const exerciseLibrary = [
     { name: "Abdominal Supra", muscle: "Abdômen", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2dcb?auto=format&fit=crop&w=200&q=80", video: "IODKqqHjHnI" },
     { name: "Prancha", muscle: "Abdômen", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=200&q=80", video: "ASdvN98wQ" }
 ];
+
 function navigateTo(viewName) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
     document.getElementById(`view-${viewName}`).classList.add('active-view');
@@ -126,10 +122,10 @@ function openVideo(name) {
     const searchUrl = `https://www.youtube.com/results?search_query=Como+fazer+${encodeURIComponent(name)}`;
     window.open(searchUrl, '_blank');
 }
-function closeVideoModal() { document.getElementById('video-iframe').src = ""; document.getElementById('video-modal').classList.add('hidden'); }
 
 let tempExercisesToAdd = [];
 let editingWorkoutId = null;
+let currentMuscleTab = "Peito";
 
 function openCreateWorkoutModal() {
     editingWorkoutId = null; tempExercisesToAdd = [];
@@ -155,14 +151,11 @@ function editWorkout(id) {
 
 async function deleteWorkout(id) {
     if (confirm("Excluir este treino?")) {
-        // Idealmente chamar a API para deletar, aqui só removemos da tela
         DB.workouts = DB.workouts.filter(w => w.id !== id);
         renderWorkouts();
-        alert("Treino excluído (localmente). Para excluir do banco, crie uma rota DELETE no backend.");
+        alert("Treino excluído da tela. (Crie a rota DELETE no backend para remover do banco de dados permanently)");
     }
 }
-
-let currentMuscleTab = "Peito"; // Aba padrão
 
 function renderLibrary() {
     const tabsDiv = document.getElementById('exercises-tabs');
@@ -190,6 +183,7 @@ function renderLibrary() {
         `;
     });
 }
+
 function changeMuscleTab(muscle) {
     currentMuscleTab = muscle;
     renderLibrary();
@@ -209,7 +203,7 @@ function renderAddedExercises() {
 }
 
 function removeAddedExercise(index) { tempExercisesToAdd.splice(index, 1); renderAddedExercises(); }
-function closeCreateModal() { targetUserEmailForWorkout = null; document.getElementById('create-workout-modal').classList.add('hidden'); }
+function closeCreateModal() { targetUserIdForWorkout = null; document.getElementById('create-workout-modal').classList.add('hidden'); }
 
 let currentExerciseConfig = null;
 let tempSetsCount = 3;
@@ -251,18 +245,30 @@ async function saveNewWorkout() {
     const desc = document.getElementById('new-workout-desc').value;
     if (!name || tempExercisesToAdd.length === 0) { alert("Dê um nome e adicione exercícios."); return; }
 
-    const newWorkout = { id: Date.now().toString(), name, desc, exercises: tempExercisesToAdd };
+    const userId = targetUserIdForWorkout || loggedUser.id;
 
-    // Manda para a API (Banco de dados real)
     await fetch(`${API}/workouts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, desc, exercises: tempExercisesToAdd, userId: loggedUser.id })
+        body: JSON.stringify({ name, desc, exercises: tempExercisesToAdd, userId })
     });
 
-    if (!editingWorkoutId) DB.workouts.push(newWorkout);
+    if (!targetUserIdForWorkout) {
+        const newWorkout = { id: Date.now().toString(), name, desc, exercises: tempExercisesToAdd };
+        if (editingWorkoutId) {
+            const workout = DB.workouts.find(w => w.id === editingWorkoutId);
+            workout.name = name; workout.desc = desc; workout.exercises = tempExercisesToAdd;
+        } else {
+            DB.workouts.push(newWorkout);
+        }
+        renderWorkouts();
+    } else {
+        viewClient(targetUserIdForWorkout);
+    }
+    
     editingWorkoutId = null;
-    closeCreateModal(); renderWorkouts();
+    targetUserIdForWorkout = null;
+    closeCreateModal(); 
 }
 
 // --- LÓGICA DO MODO TREINO ATIVO ---
@@ -334,7 +340,6 @@ async function finishWorkout() {
         let volume = 0;
         flatSets.forEach(s => { if (s.actualReps && s.actualWeight) volume += (s.actualReps * s.actualWeight); });
         
-        // Salva no Banco de Dados
         await fetch(`${API}/history`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -471,21 +476,16 @@ async function saveProfile() {
     if (!newName) { alert("O nome não pode ficar vazio!"); return; }
     
     try {
-        // Manda os dados para o Render atualizar no banco de dados
         const res = await fetch(`${API}/users/${loggedUser.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: newName, picture: newPicture, phone: newPhone })
         });
-        
         const data = await res.json();
-        
         if (data.error) { alert(data.error); return; }
-        
-        // Atualiza a sessão local com os dados que vieram do banco
         localStorage.setItem('gympro_user', JSON.stringify(data));
         alert("Perfil atualizado com sucesso no banco de dados!");
-        loadProfileData(); // Volta para a tela de visualização
+        loadProfileData();
     } catch (err) {
         alert("Erro de conexão. O Render pode estar dormindo (demora 50s).");
     }
@@ -503,9 +503,6 @@ function checkAdminStatus() {
     const navClients = document.getElementById('nav-clients');
     if (loggedUser.isAdmin) { navClients.style.display = 'flex'; } else { navClients.style.display = 'none'; }
 }
-
-let targetUserIdForWorkout = null;
-let globalClients = [];
 
 async function renderClients() {
     const list = document.getElementById('clients-list');
@@ -631,38 +628,6 @@ async function adminDeleteClient(id) {
 function adminAddWorkout(id) {
     targetUserIdForWorkout = id;
     openCreateWorkoutModal();
-}
-
-// Função de salvar treino (atualizada para recomendar para o cliente)
-async function saveNewWorkout() {
-    const name = document.getElementById('new-workout-name').value;
-    const desc = document.getElementById('new-workout-desc').value;
-    if (!name || tempExercisesToAdd.length === 0) { alert("Dê um nome e adicione exercícios."); return; }
-
-    const userId = targetUserIdForWorkout || loggedUser.id;
-
-    await fetch(`${API}/workouts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, desc, exercises: tempExercisesToAdd, userId })
-    });
-
-    if (!targetUserIdForWorkout) {
-        const newWorkout = { id: Date.now().toString(), name, desc, exercises: tempExercisesToAdd };
-        if (editingWorkoutId) {
-            const workout = DB.workouts.find(w => w.id === editingWorkoutId);
-            workout.name = name; workout.desc = desc; workout.exercises = tempExercisesToAdd;
-        } else {
-            DB.workouts.push(newWorkout);
-        }
-        renderWorkouts();
-    } else {
-        viewClient(targetUserIdForWorkout);
-    }
-    
-    editingWorkoutId = null;
-    targetUserIdForWorkout = null;
-    closeCreateModal(); 
 }
 
 // Inicia a aplicação
