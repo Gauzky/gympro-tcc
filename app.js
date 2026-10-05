@@ -6,26 +6,20 @@ if (!localStorage.getItem('gympro_user')) {
 const loggedUser = JSON.parse(localStorage.getItem('gympro_user') || '{}');
 const API = 'https://academax-backend.onrender.com/api';
 
-// Variáveis globais
 let targetUserIdForWorkout = null;
 let globalClients = [];
 let DB = { workouts: [], history: [] };
 
-// Carrega treinos e histórico do banco de dados real
 async function loadDB() {
     try {
         const resWorkouts = await fetch(`${API}/workouts/${loggedUser.id}`);
         DB.workouts = await resWorkouts.json();
-        
         const resHistory = await fetch(`${API}/history/${loggedUser.id}`);
         DB.history = await resHistory.json();
-        
         renderDashboard();
         renderWorkouts();
         renderHistory();
-    } catch (error) {
-        console.error("Erro ao carregar banco de dados:", error);
-    }
+    } catch (error) { console.error("Erro ao carregar banco de dados:", error); }
 }
 
 const exerciseLibrary = [
@@ -56,11 +50,7 @@ function navigateTo(viewName) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
     document.getElementById(`view-${viewName}`).classList.add('active-view');
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    if (typeof event !== 'undefined' && event && event.target && event.target.classList.contains('nav-btn')) {
-        event.target.classList.add('active');
-    } else if (typeof event !== 'undefined' && event && event.target.closest('.nav-btn')) {
-        event.target.closest('.nav-btn').classList.add('active');
-    }
+    if (typeof event !== 'undefined' && event && event.target && event.target.classList.contains('nav-btn')) { event.target.classList.add('active'); } else if (typeof event !== 'undefined' && event && event.target.closest('.nav-btn')) { event.target.closest('.nav-btn').classList.add('active'); }
     if (viewName === 'dashboard') renderDashboard();
     if (viewName === 'workouts') renderWorkouts();
     if (viewName === 'history') renderHistory();
@@ -87,10 +77,7 @@ function initWeightChart() {
     if (weightChart) weightChart.destroy();
     weightChart = new Chart(context, {
         type: 'line',
-        data: {
-            labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5'],
-            datasets: [{ label: 'Peso (kg)', data: [75, 74.5, 74.2, 73.8, 73.5], borderColor: '#b5c7eb', backgroundColor: 'rgba(181, 199, 235, 0.1)', borderWidth: 3, fill: true, tension: 0.4 }]
-        },
+        data: { labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5'], datasets: [{ label: 'Peso (kg)', data: [75, 74.5, 74.2, 73.8, 73.5], borderColor: '#b5c7eb', backgroundColor: 'rgba(181, 199, 235, 0.1)', borderWidth: 3, fill: true, tension: 0.4 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b6e76' } }, x: { grid: { display: false }, ticks: { color: '#6b6e76' } } } }
     });
 }
@@ -118,10 +105,8 @@ let tempExercisesToAdd = []; let editingWorkoutId = null; let currentMuscleTab =
 function openCreateWorkoutModal() {
     editingWorkoutId = null; tempExercisesToAdd = [];
     document.getElementById('new-workout-name').value = ""; document.getElementById('new-workout-desc').value = "";
-    document.getElementById('form-modal-title').innerText = "Criar Novo Treino";
-    document.getElementById('save-workout-btn').innerText = "Salvar Treino";
-    document.getElementById('create-workout-modal').classList.remove('hidden');
-    renderAddedExercises(); renderLibrary();
+    document.getElementById('form-modal-title').innerText = "Criar Novo Treino"; document.getElementById('save-workout-btn').innerText = "Salvar Treino";
+    document.getElementById('create-workout-modal').classList.remove('hidden'); renderAddedExercises(); renderLibrary();
 }
 
 function editWorkout(id) {
@@ -188,6 +173,7 @@ async function saveNewWorkout() {
     } else { viewClient(targetUserIdForWorkout); }
     editingWorkoutId = null; targetUserIdForWorkout = null; closeCreateModal(); 
 }
+
 // --- LÓGICA DO MODO TREINO ATIVO ---
 let activeWorkout = null; let activeExerciseIndex = 0; let flatSets = []; let timerInterval = null; let timeLeft = 0;
 
@@ -402,11 +388,9 @@ function toggleTheme() {
     document.body.classList.toggle('light-mode');
     let isLight = document.body.classList.contains('light-mode');
     localStorage.setItem('academax_theme', isLight ? 'light' : 'dark');
-    
     const toggleIcon = document.querySelector('.theme-toggle i');
     if (toggleIcon) toggleIcon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
 }
-
 function applyTheme() {
     if (localStorage.getItem('academax_theme') === 'light') {
         document.body.classList.add('light-mode');
@@ -415,6 +399,7 @@ function applyTheme() {
     }
 }
 applyTheme();
+
 // Inicia a aplicação
 checkAdminStatus();
 loadDB();
