@@ -198,9 +198,8 @@ label { font-size: 13px; color: var(--text-muted); font-weight: 500; display: bl
 }
 
 /* =========================================================
-   MODO CLARO (LIGHT MODE) - TEMA BRANCO
+   MODO CLARO (TEMA BRANCO)
    ========================================================= */
-.header-actions { display: flex; gap: 15px; align-items: center; }
 .theme-toggle { cursor: pointer; transition: transform 0.2s; }
 .theme-toggle:hover { transform: scale(1.1); }
 
@@ -214,7 +213,6 @@ body.light-mode {
     --text-main: #1e293b;
     --text-muted: #64748b;
     --border: rgba(0, 0, 0, 0.08);
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 /* Ajustes específicos no Tema Claro */
@@ -235,6 +233,4 @@ body.light-mode .btn-start,
 body.light-mode .admin-badge, 
 body.light-mode .prog-record,
 body.light-mode .manage-btn:hover,
-body.light-mode .btn-add-lib:hover {
-    color: #ffffff !important;
-}
+body.light-mode .btn-add-lib:hover { color: #ffffff !important; }

@@ -164,7 +164,7 @@
             width: 100% !important;
         }
 
-    .theme-toggle-fixed { position: fixed; top: 20px; right: 20px; cursor: pointer; color: var(--text-muted); font-size: 22px; z-index: 100; transition: transform 0.2s; }
+        .theme-toggle-fixed { position: fixed; top: 20px; right: 20px; cursor: pointer; color: var(--text-muted); font-size: 22px; z-index: 100; transition: transform 0.2s; }
     .theme-toggle-fixed:hover { transform: scale(1.1); color: var(--primary); }
 
     /* Modo Claro na Tela de Login */
@@ -178,11 +178,10 @@
     body.light-mode .mock-btn { background: #3b82f6; }
     body.light-mode .btn-primary { color: #ffffff; }
     body.light-mode .social-btn { background: #fff; border: 1px solid rgba(0,0,0,0.08); }
-
     </style>
 </head>
 <body>
-        <div class="theme-toggle-fixed" onclick="toggleTheme()"><i class="fa-solid fa-sun"></i></div>
+          <div class="theme-toggle-fixed" onclick="toggleTheme()"><i class="fa-solid fa-sun"></i></div>
 
     <!-- LADO ESQUERDO: LOGIN/CADASTRO -->
     <div class="login-side">
@@ -289,6 +288,19 @@
     <script>
         const API = 'https://academax-backend.onrender.com/api';
         console.log("API configurada para:", API);
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        let isLight = document.body.classList.contains('light-mode');
+        localStorage.setItem('academax_theme', isLight ? 'light' : 'dark');
+        document.querySelector('.theme-toggle-fixed i').className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+    }
+
+    // Aplicar tema salvo ao carregar a tela de login
+    if (localStorage.getItem('academax_theme') === 'light') {
+        document.body.classList.add('light-mode');
+        document.querySelector('.theme-toggle-fixed i').className = 'fa-solid fa-moon';
+    }
 
         function toggleAuthView(view) {
             if (view === 'register') {

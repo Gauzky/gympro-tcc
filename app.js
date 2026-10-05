@@ -398,16 +398,14 @@ async function adminDeleteClient(id) {
 function adminAddWorkout(id) { targetUserIdForWorkout = id; openCreateWorkoutModal(); }
 
 // --- ALTERNAR TEMA (DARK/LIGHT MODE) ---
+// --- ALTERNAR TEMA (DARK/LIGHT MODE) ---
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
     let isLight = document.body.classList.contains('light-mode');
     localStorage.setItem('academax_theme', isLight ? 'light' : 'dark');
     
-    // Troca o ícone (Sol no escuro, Lua no claro)
     const toggleIcon = document.querySelector('.theme-toggle i');
-    if (toggleIcon) {
-        toggleIcon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-    }
+    if (toggleIcon) toggleIcon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
 }
 
 function applyTheme() {
@@ -417,7 +415,6 @@ function applyTheme() {
         if (toggleIcon) toggleIcon.className = 'fa-solid fa-moon';
     }
 }
-// Aplica o tema assim que a página carrega
 applyTheme();
 
 // Inicia a aplicação
