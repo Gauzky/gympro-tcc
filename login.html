@@ -178,6 +178,10 @@
     body.light-mode .mock-btn { background: #3b82f6; }
     body.light-mode .btn-primary { color: #ffffff; }
     body.light-mode .social-btn { background: #fff; border: 1px solid rgba(0,0,0,0.08); }
+        /* Ajustando a Logo na Tela de Login para Tema Claro */
+    body.light-mode .logo svg path[stroke="#b5c7eb"] { stroke: #3b82f6; }
+    body.light-mode .logo svg path[stroke="#f2f5f7"] { stroke: #1e293b; }
+    body.light-mode .logo svg rect[fill="#b5c7eb"] { fill: #3b82f6; }
     </style>
 </head>
 <body>
@@ -289,19 +293,8 @@
         const API = 'https://academax-backend.onrender.com/api';
         console.log("API configurada para:", API);
 
-    function toggleTheme() {
-        document.body.classList.toggle('light-mode');
-        let isLight = document.body.classList.contains('light-mode');
-        localStorage.setItem('academax_theme', isLight ? 'light' : 'dark');
-        document.querySelector('.theme-toggle-fixed i').className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-    }
 
-    // Aplicar tema salvo ao carregar a tela de login
-    if (localStorage.getItem('academax_theme') === 'light') {
-        document.body.classList.add('light-mode');
-        document.querySelector('.theme-toggle-fixed i').className = 'fa-solid fa-moon';
-    }
-
+        
         function toggleAuthView(view) {
             if (view === 'register') {
                 document.getElementById('login-view').classList.add('hidden');

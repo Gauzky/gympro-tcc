@@ -234,3 +234,7 @@ body.light-mode .admin-badge,
 body.light-mode .prog-record,
 body.light-mode .manage-btn:hover,
 body.light-mode .btn-add-lib:hover { color: #ffffff !important; }
+/* Ajustando a Logo no Tema Claro para ficar legível */
+body.light-mode .logo svg path[stroke="#b5c7eb"] { stroke: var(--primary); } /* MAX fica azul escuro */
+body.light-mode .logo svg path[stroke="#f2f5f7"] { stroke: var(--text-main); } /* ACADE fica preto */
+body.light-mode .logo svg rect[fill="#b5c7eb"] { fill: var(--primary); } /* Barrinha do meio fica azul escuro */
