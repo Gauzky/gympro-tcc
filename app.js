@@ -398,7 +398,6 @@ async function adminDeleteClient(id) {
 function adminAddWorkout(id) { targetUserIdForWorkout = id; openCreateWorkoutModal(); }
 
 // --- ALTERNAR TEMA (DARK/LIGHT MODE) ---
-// --- ALTERNAR TEMA (DARK/LIGHT MODE) ---
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
     let isLight = document.body.classList.contains('light-mode');
@@ -416,7 +415,6 @@ function applyTheme() {
     }
 }
 applyTheme();
-
 // Inicia a aplicação
 checkAdminStatus();
 loadDB();
